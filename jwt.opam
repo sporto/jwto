@@ -5,5 +5,9 @@ maintainer: "Your Name <email@example.com>"
 
 depends: [
   "dune" {build}
+  "cryptokit"
+  "yojson"
+  "base64"
+  "re"
   "alcotest"
 ]

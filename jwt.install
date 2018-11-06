@@ -1,0 +1,4 @@
+lib: [
+  "_build/install/default/lib/jwt/META" {"META"}
+  "_build/install/default/lib/jwt/opam" {"opam"}
+]
