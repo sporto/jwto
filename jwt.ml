@@ -253,7 +253,7 @@ let decodeParts (header_encoded: string) (payload_encoded: string) (signature_en
 	match claimsResult with
 		| Error e -> Error e
 		| Ok claims -> 
-			let header = 
+			let header =
 				header_encoded
 					|> b64_url_decode
 					|> decode_header
@@ -279,3 +279,16 @@ let decode (token:string) : (t, string) result =
 			Error "Bad token"
 	with _ ->
 		Error "Bad token"
+
+
+let verify (secret:string) (jwt:t) : bool =
+	let
+		unsigned =
+			{
+				header = jwt.header;
+				claims = jwt.claims;
+			}
+	in
+	make_signature secret unsigned = jwt.signature
+
+(* Printf.printf "%S \n" (make_signature secret unsigned); *)
