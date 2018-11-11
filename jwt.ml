@@ -1,5 +1,10 @@
 let (>>) f g x = g(f(x))
 
+let (>>=) result f =
+	match result with
+	| Error e -> Error e
+	| Ok v -> f v
+
 let flatten list =
 	List.fold_left
 		(fun acc res ->
@@ -281,7 +286,7 @@ let decode (token:string) : (t, string) result =
 		Error "Bad token"
 
 
-let verify (secret:string) (jwt:t) : bool =
+let is_valid (secret:string) (jwt:t) : bool =
 	let
 		unsigned =
 			{
@@ -290,5 +295,18 @@ let verify (secret:string) (jwt:t) : bool =
 			}
 	in
 	make_signature secret unsigned = jwt.signature
+
+
+let verify secret jwt =
+	if is_valid secret jwt then
+		Ok jwt
+	else
+		Error "Invalid token"
+
+
+let decode_and_verify (secret:string) (token:string) : (t, string) result =
+	token
+		|> decode
+		>>= verify secret
 
 (* Printf.printf "%S \n" (make_signature secret unsigned); *)

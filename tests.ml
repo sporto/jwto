@@ -99,19 +99,35 @@ let verify_ok_test () =
 	Alcotest.(check bool)
 		"true"
 		true
-		(Jwt.verify secret signed_token_fixture)
+		(Jwt.is_valid secret signed_token_fixture)
 
 let verify_false_test () =
 	Alcotest.(check bool)
 		"false"
 		false
-		(Jwt.verify "xyz" signed_token_fixture)
+		(Jwt.is_valid "xyz" signed_token_fixture)
 
-let verify = [
+let is_valid = [
 	"It returns true when valid", `Quick, verify_ok_test;
 	"It returns false when invalid", `Quick, verify_false_test;
 ]
 
+let decode_and_verify_ok () =
+	Alcotest.(check resultT)
+		"decodes"
+		(Ok signed_token_fixture)
+		(Jwt.decode_and_verify secret token)
+
+let decode_and_verify_err () =
+	Alcotest.(check resultT)
+		"decodes"
+		(Error "Invalid token")
+		(Jwt.decode_and_verify "xyz" token)
+
+let decode_and_verify = [
+	"It decodes when valid", `Quick, decode_and_verify_ok;
+	"It doesn't decode when invalid", `Quick, decode_and_verify_err;
+]
 
 let () =
 	Alcotest.run "JWT" [
@@ -120,5 +136,6 @@ let () =
 		"Encode claims", claims_to_string;
 		"Encode JWT", encode;
 		"Decode token", decode;
-		"Verify JWT", verify;
+		"Verify JWT", is_valid;
+		"Decode and verify", decode_and_verify;
 	]
