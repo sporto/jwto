@@ -95,21 +95,21 @@ let decode = [
 	"It can fail to decode", `Quick, decode_fail_test;
 ]
 
-let verify_ok_test () =
+let is_valid_true () =
 	Alcotest.(check bool)
 		"true"
 		true
 		(Jwt.is_valid secret signed_token_fixture)
 
-let verify_false_test () =
+let is_valid_false () =
 	Alcotest.(check bool)
 		"false"
 		false
 		(Jwt.is_valid "xyz" signed_token_fixture)
 
 let is_valid = [
-	"It returns true when valid", `Quick, verify_ok_test;
-	"It returns false when invalid", `Quick, verify_false_test;
+	"It returns true when valid", `Quick, is_valid_true;
+	"It returns false when invalid", `Quick, is_valid_false;
 ]
 
 let decode_and_verify_ok () =
