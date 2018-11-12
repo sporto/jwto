@@ -51,8 +51,10 @@ Verify and decode. If the verification fails you will get an `Error`.
 
 ## Verify only
 
+```ocaml
 	Jwt.is_valid "secet" "eyJhbGciOiJIUzI1NiJ9...."
 	
 	-->
 
 	true
+```
