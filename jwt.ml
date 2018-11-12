@@ -53,14 +53,14 @@ type header =
 	} [@@deriving show, eq]
 
 
-type claims = (string * string) list
+type payload = (string * string) list
 [@@deriving show, eq]
 
 
 type t =
 	{
 		header : header;
-		claims : claims;
+		payload : payload;
 		signature : string;
 	} [@@deriving show, eq]
 
@@ -68,7 +68,7 @@ type t =
 type unsigned_token =
 	{
 		header : header;
-		claims : claims;
+		payload : payload;
 	}
 
 let pp_header (header: header) : string =
@@ -131,7 +131,7 @@ let payload_to_json payload =
   `Assoc members
 
 
-let claims_to_string =
+let payload_to_string =
 	payload_to_json >> Yojson.Basic.to_string
 
 
@@ -143,8 +143,8 @@ let b64_url_decode str =
 	B64.decode ~alphabet:B64.uri_safe_alphabet str
 
 
-let make_token (header:header) (claims:claims) : unsigned_token =
-	{ header; claims }
+let make_token (header:header) (payload:payload) : unsigned_token =
+	{ header; payload }
 
 
 let make_signature (secret:string) (token:unsigned_token) : string =
@@ -153,9 +153,9 @@ let make_signature (secret:string) (token:unsigned_token) : string =
 			|> header_to_string
 			|> b64_url_encode
 	in
-  	let b64_claims = 
-	  	token.claims
-			|> claims_to_string
+  	let b64_payload = 
+	  	token.payload
+			|> payload_to_string
 			|> b64_url_encode
 	in
   	let algo_fn = 
@@ -164,7 +164,7 @@ let make_signature (secret:string) (token:unsigned_token) : string =
 			|> fn_for_algorithm
 	in
   	let unsigned_token =
-		b64_header ^ "." ^ b64_claims 
+		b64_header ^ "." ^ b64_payload 
 	in
 	Cryptokit.hash_string (algo_fn secret) unsigned_token
 
@@ -172,7 +172,7 @@ let make_signature (secret:string) (token:unsigned_token) : string =
 let sign (secret: string) (token:unsigned_token) : t =
 	{
 		header = token.header;
-		claims = token.claims;
+		payload = token.payload;
 		signature = make_signature secret token;
 	}
 
@@ -210,15 +210,15 @@ let claim_from_json json : ((string * string), string) result =
 			Error "Bad payload"
 
 
-let claims_from_json json : (claims, string) result =
+let payload_from_json json : (payload, string) result =
 	json
 		|> Yojson.Basic.Util.to_assoc
   		|> List.map claim_from_json
 		|> flatten
 
 
-let decode_claims =
-	Yojson.Basic.from_string >> claims_from_json
+let decode_payload =
+	Yojson.Basic.from_string >> payload_from_json
 
 
 let encode_header (header:header) : string =
@@ -227,9 +227,9 @@ let encode_header (header:header) : string =
 		|> b64_url_encode
 
 
-let encode_claims (claims:claims) =
-	claims
-		|> claims_to_string
+let encode_payload (payload:payload) =
+	payload
+		|> payload_to_string
 		|> b64_url_encode
 
 
@@ -238,26 +238,26 @@ let encode (token:t) : string =
 		token.header
 			|> encode_header
 	in
-  	let b64_claims = 
-	  	token.claims
-	  		|> encode_claims
+  	let b64_payload = 
+	  	token.payload
+	  		|> encode_payload
 	in
   	let b64_signature =
 	  	token.signature
 			|> b64_url_encode
 	in
-  	b64_header ^ "." ^ b64_claims ^ "." ^ b64_signature
+  	b64_header ^ "." ^ b64_payload ^ "." ^ b64_signature
 
 
 let decodeParts (header_encoded: string) (payload_encoded: string) (signature_encoded: string) =
-	let claimsResult =
+	let payloadResult =
 		payload_encoded
 			|> b64_url_decode
-			|> decode_claims
+			|> decode_payload
 	in
-	match claimsResult with
+	match payloadResult with
 		| Error e -> Error e
-		| Ok claims -> 
+		| Ok payload -> 
 			let header =
 				header_encoded
 					|> b64_url_decode
@@ -266,7 +266,7 @@ let decodeParts (header_encoded: string) (payload_encoded: string) (signature_en
 			let signature = 
 				b64_url_decode signature_encoded 
 			in
-			Ok { header ; claims ; signature }
+			Ok { header ; payload ; signature }
 
 
 let decode (token:string) : (t, string) result =
@@ -291,7 +291,7 @@ let is_valid (secret:string) (jwt:t) : bool =
 		unsigned =
 			{
 				header = jwt.header;
-				claims = jwt.claims;
+				payload = jwt.payload;
 			}
 	in
 	make_signature secret unsigned = jwt.signature

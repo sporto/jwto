@@ -6,7 +6,7 @@ let (header_fixture:Jwt.header) =
 let header_json =
 	"{\"alg\":\"HS256\",\"typ\":\"typ\"}"
 
-let claims_fixture =
+let payload_fixture =
 	[
 		("user", "sam");
 	]
@@ -17,7 +17,7 @@ let secret =
 let signed_token_fixture =
 	Jwt.make_token
 		header_fixture
-		claims_fixture
+		payload_fixture
 		|> Jwt.sign secret
 
 let token =
@@ -48,22 +48,22 @@ let header_to_string = [
 	"Encodes the header", `Quick, encode_header;
 ]
 
-let empty_claims () =
+let empty_payload () =
 	Alcotest.(check string)
 		"empty" 
 		"{}"
-		(Jwt.claims_to_string [])
+		(Jwt.payload_to_string [])
 
 
-let with_claims () =
+let with_payload () =
 	Alcotest.(check string)
 		"with payload" 
 		"{\"hello\":\"word\"}"
-		(Jwt.claims_to_string [( "hello", "word" )])
+		(Jwt.payload_to_string [( "hello", "word" )])
 
-let claims_to_string = [
-	"Empty payload", `Quick, empty_claims;
-	"With claims", `Quick, with_claims;
+let payload_to_string = [
+	"Empty payload", `Quick, empty_payload;
+	"With payload", `Quick, with_payload;
 ]
 
 let encode_test () =
@@ -133,7 +133,7 @@ let () =
 	Alcotest.run "JWT" [
 		"Encode header", header_to_string;
 		(* "Decode header", header_decode_tests; *)
-		"Encode claims", claims_to_string;
+		"Encode payload", payload_to_string;
 		"Encode JWT", encode;
 		"Decode token", decode;
 		"Verify JWT", is_valid;
