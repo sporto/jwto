@@ -142,47 +142,36 @@ let b64_url_encode str =
 let b64_url_decode str =
 	B64.decode ~alphabet:B64.uri_safe_alphabet str
 
+let encode_header (header:header) : string =
+	header
+		|> header_to_string
+		|> b64_url_encode
 
-let make_signature (secret:string) (token:unsigned_token) : string =
+
+let encode_payload (payload:payload) =
+	payload
+		|> payload_to_string
+		|> b64_url_encode
+
+
+let encode_unsigned (unsigned_token:unsigned_token) : string =
 	let b64_header = 
-		token.header
-			|> header_to_string
-			|> b64_url_encode
+		encode_header unsigned_token.header
 	in
   	let b64_payload = 
-	  	token.payload
-			|> payload_to_string
-			|> b64_url_encode
+	  	encode_payload unsigned_token.payload
 	in
+	b64_header ^ "." ^ b64_payload
+
+
+let sign (secret:string) (unsigned_token:unsigned_token) : string =
   	let algo_fn = 
-	  	token.header
-		  	|> algorithm_from_header
-			|> fn_for_algorithm
+		fn_for_algorithm 
+			unsigned_token.header.alg
 	in
-  	let unsigned_token =
-		b64_header ^ "." ^ b64_payload 
-	in
-	Cryptokit.hash_string (algo_fn secret) unsigned_token
-
-
-let sign (secret: string) (token:unsigned_token) : t =
-	{
-		header = token.header;
-		payload = token.payload;
-		signature = make_signature secret token;
-	}
-
-
-let make (alg:algorithm) (secret:string) (payload:payload) : t =
-	let
-		header =
-			{
-				alg = alg;
-				typ = None;
-			}
-	in
-	{ header; payload }
-		|> sign secret
+	Cryptokit.hash_string
+		(algo_fn secret) 
+		(encode_unsigned unsigned_token)
 
 
 let header_from_json json =
@@ -229,32 +218,31 @@ let decode_payload =
 	Yojson.Basic.from_string >> payload_from_json
 
 
-let encode_header (header:header) : string =
-	header
-		|> header_to_string
-		|> b64_url_encode
-
-
-let encode_payload (payload:payload) =
-	payload
-		|> payload_to_string
-		|> b64_url_encode
-
-
-let encode (token:t) : string =
-	let b64_header = 
-		token.header
-			|> encode_header
+let encode (alg:algorithm) (secret:string) (payload:payload) : string =
+	let
+		header =
+			{
+				alg = alg;
+				typ = None;
+			}
 	in
-  	let b64_payload = 
-	  	token.payload
-	  		|> encode_payload
+	let
+		unsigned_token =
+			{
+				header = header;
+				payload = payload;
+			}
 	in
-  	let b64_signature =
-	  	token.signature
-			|> b64_url_encode
+  	let unsigned_token_string =
+		encode_unsigned unsigned_token
 	in
-  	b64_header ^ "." ^ b64_payload ^ "." ^ b64_signature
+	let signature =
+		sign secret unsigned_token
+	in
+	let b64_signature =
+	  	b64_url_encode signature
+	in
+  	unsigned_token_string ^ "." ^ b64_signature
 
 
 let decodeParts (header_encoded: string) (payload_encoded: string) (signature_encoded: string) =
@@ -302,7 +290,11 @@ let is_valid (secret:string) (jwt:t) : bool =
 				payload = jwt.payload;
 			}
 	in
-	make_signature secret unsigned = jwt.signature
+	let
+		signature =
+			sign secret unsigned
+	in
+	signature = jwt.signature
 
 
 let verify secret jwt =

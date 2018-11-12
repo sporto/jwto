@@ -1,10 +1,10 @@
 (* Fixtures *)
 
 let (header_fixture:Jwt.header) =
-	{alg = Jwt.HS256; typ = Some "typ"}
+	{alg = Jwt.HS256; typ = None}
 
 let header_json =
-	"{\"alg\":\"HS256\",\"typ\":\"typ\"}"
+	"{\"alg\":\"HS256\"}"
 
 let payload_fixture =
 	[
@@ -14,11 +14,18 @@ let payload_fixture =
 let secret =
 	"abc"
 
-let signed_token_fixture =
-	Jwt.make
-		Jwt.HS256
-		secret
-		payload_fixture
+let (unsigned_token_fixture:Jwt.unsigned_token) =
+	{
+		header = header_fixture;
+		payload = payload_fixture;
+	}
+
+let (signed_token_fixture:Jwt.t) =
+	{
+		header = unsigned_token_fixture.header;
+		payload = unsigned_token_fixture.payload;
+		signature = Jwt.sign secret unsigned_token_fixture;
+	}
 
 let token =
 	"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoic2FtIn0.S2j6W5w25AS0avioniNFIYJeeospOVyO5fqApYoUMho"
@@ -70,7 +77,11 @@ let encode_test () =
 	Alcotest.(check string)
 		"encodes"
 		token
-		(Jwt.encode signed_token_fixture)
+		(Jwt.encode
+			Jwt.HS256 
+			secret 
+			payload_fixture
+		)
 
 let encode = [
 	"It encodes", `Quick, encode_test;
