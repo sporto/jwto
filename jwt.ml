@@ -143,10 +143,6 @@ let b64_url_decode str =
 	B64.decode ~alphabet:B64.uri_safe_alphabet str
 
 
-let make_token (header:header) (payload:payload) : unsigned_token =
-	{ header; payload }
-
-
 let make_signature (secret:string) (token:unsigned_token) : string =
 	let b64_header = 
 		token.header
@@ -175,6 +171,18 @@ let sign (secret: string) (token:unsigned_token) : t =
 		payload = token.payload;
 		signature = make_signature secret token;
 	}
+
+
+let make (alg:algorithm) (secret:string) (payload:payload) : t =
+	let
+		header =
+			{
+				alg = alg;
+				typ = None;
+			}
+	in
+	{ header; payload }
+		|> sign secret
 
 
 let header_from_json json =

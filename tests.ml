@@ -15,13 +15,13 @@ let secret =
 	"abc"
 
 let signed_token_fixture =
-	Jwt.make_token
-		header_fixture
+	Jwt.make
+		Jwt.HS256
+		secret
 		payload_fixture
-		|> Jwt.sign secret
 
 let token =
-	"eyJhbGciOiJIUzI1NiIsInR5cCI6InR5cCJ9.eyJ1c2VyIjoic2FtIn0.u6y_6-2gnJehskhnGkJSwmM9oe1plyVVsdv3QIxU-LU"
+	"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoic2FtIn0.S2j6W5w25AS0avioniNFIYJeeospOVyO5fqApYoUMho"
 
 (* Test helpes *)
 
