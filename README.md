@@ -10,10 +10,7 @@ A payload is a list of tuples `(string, string)`:
 			("age", "17");
 		]
 
-	Jwt.make
-		Jwt.HS256
-		"secret"
-		payload
+	Jwt.make Jwt.HS256 "secret" payload
 
 `Jwt.make` returns a signed token (type Jwt.t):
 
@@ -25,10 +22,7 @@ A payload is a list of tuples `(string, string)`:
 
 ## Encode token
 
-	Jwt.make
-		Jwt.HS256
-		"secret"
-		payload
+	Jwt.make Jwt.HS256 "secret" payload
 		|> Jwt.encode
 
 	-->
@@ -39,8 +33,7 @@ A payload is a list of tuples `(string, string)`:
 
 Just decode the token, doesn't verify.
 
-	Jwt.decode
-		"eyJhbGciOiJIUzI1NiJ9...."
+	Jwt.decode "eyJhbGciOiJIUzI1NiJ9...."
 
 	-->
 
@@ -50,9 +43,7 @@ Just decode the token, doesn't verify.
 
 Verify and decode. If the verification fails you will get an `Error`.
 
-	Jwt.decode_and_verify
-		"secret"
-		"eyJhbGciOiJIUzI1NiJ9...."
+	Jwt.decode_and_verify "secret" "eyJhbGciOiJIUzI1NiJ9...."
 
 	-->
 
@@ -60,9 +51,7 @@ Verify and decode. If the verification fails you will get an `Error`.
 
 ## Verify only
 
-	Jwt.is_valid
-		"secet"
-		"eyJhbGciOiJIUzI1NiJ9...."
+	Jwt.is_valid "secet" "eyJhbGciOiJIUzI1NiJ9...."
 	
 	-->
 
