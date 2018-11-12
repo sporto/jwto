@@ -6,10 +6,10 @@ A payload is a list of tuples `(string, string)`:
 
 ```ocaml
 let payload =
-	[
-		("user", "sam);
-		("age", "17");
-	]
+  [
+    ("user", "sam);
+    ("age", "17");
+  ]
 
 Jwt.make Jwt.HS256 "secret" payload
 ```
@@ -18,9 +18,9 @@ Jwt.make Jwt.HS256 "secret" payload
 
 ```ocaml
 {
-	header = ...;
-	payload = [...]; 
-	signature = ...;
+  header = ...;
+  payload = [...]; 
+  signature = ...;
 }
 ```
 
@@ -28,7 +28,7 @@ Jwt.make Jwt.HS256 "secret" payload
 
 ```ocaml
 Jwt.make Jwt.HS256 "secret" payload
-	|> Jwt.encode
+  |> Jwt.encode
 
 -->
 
