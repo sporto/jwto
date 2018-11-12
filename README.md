@@ -15,7 +15,13 @@ A payload is a list of tuples `(string, string)`:
 		"secret"
 		payload
 
-`Jwt.make` returns a signed token.
+`Jwt.make` returns a signed token (type Jwt.t):
+
+	{
+		header = ...;
+		payload = [...]; 
+		signature = ...;
+	}
 
 ## Encode token
 
@@ -24,6 +30,10 @@ A payload is a list of tuples `(string, string)`:
 		"secret"
 		payload
 		|> Jwt.encode
+
+	-->
+
+	"eyJhbGciOiJIUzI1NiJ9...."
 
 ## Decode token
 
