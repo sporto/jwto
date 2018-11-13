@@ -8,11 +8,11 @@ let header_json =
 
 let payload_fixture =
 	[
-		("user", "sam");
+		("user_id", "some@user.tld");
 	]
 
 let secret =
-	"abc"
+	"My$ecretK3y"
 
 let (unsigned_token_fixture:Jwt.unsigned_token) =
 	{
@@ -28,7 +28,7 @@ let (signed_token_fixture:Jwt.t) =
 	}
 
 let token =
-	"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoic2FtIn0.S2j6W5w25AS0avioniNFIYJeeospOVyO5fqApYoUMho"
+	"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoic29tZUB1c2VyLnRsZCJ9.kWOVtIOpWcG7JnyJG0qOkTDbOy636XrrQhMm_8JrRQ8"
 
 (* Test helpes *)
 
@@ -41,6 +41,25 @@ let resultT =
 	Alcotest.result
 		compareT
 		Alcotest.string
+
+(* Test data *)
+
+type data = {
+	alg: Jwt.algorithm;
+	token: string;
+}
+
+let data =
+	[
+		{
+			alg = Jwt.HS256;
+			token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoic29tZUB1c2VyLnRsZCJ9.kWOVtIOpWcG7JnyJG0qOkTDbOy636XrrQhMm_8JrRQ8";
+		};
+		{
+			alg = Jwt.HS512;
+			token = "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoic29tZUB1c2VyLnRsZCJ9.8zNtCBTJIZTHpZ-BkhR-6sZY1K85Nm5YCKqV3AxRdsBJDt_RR-REH2db4T3Y0uQwNknhrCnZGvhNHrvhDwV1kA";
+		};
+	]
 
 (* Test encoding *)
 
@@ -73,19 +92,23 @@ let payload_to_string = [
 	"With payload", `Quick, with_payload;
 ]
 
-let encode_test () =
+let encode_test (data:data) () =
 	Alcotest.(check string)
 		"encodes"
-		token
+		data.token
 		(Jwt.encode
-			Jwt.HS256 
+			data.alg
 			secret 
 			payload_fixture
 		)
 
-let encode = [
-	"It encodes", `Quick, encode_test;
-]
+let encode =
+	data 
+		|> List.map 
+		(fun d ->
+			("It encodes", `Quick, encode_test d)
+		)
+
 
 (* Test Decoding *)
 
