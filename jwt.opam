@@ -1,13 +1,18 @@
 opam-version: "2.0"
 name: "JWT"
 version: "1.0.0"
-maintainer: "Your Name <email@example.com>"
+maintainer: "Sebastian Porto <s@porto5.com>"
+license: "MIT"
+homepage: "https://github.com/sporto/ocaml-jwt"
 
 depends: [
-  "dune" {build}
   "cryptokit"
   "yojson"
   "base64"
   "re"
+]
+
+build: [
+  "dune"
   "alcotest"
 ]
