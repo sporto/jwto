@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "JWT"
-version: "1.0.0"
+version: "0.1.0"
 maintainer: "Sebastian Porto <s@porto5.com>"
 license: "MIT"
 homepage: "https://github.com/sporto/ocaml-jwt"
