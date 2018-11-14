@@ -6,16 +6,11 @@ license: "MIT"
 homepage: "https://github.com/sporto/ocaml-jwt"
 
 depends: [
+  "dune" {build}
+  "alcotest" {with-test}
   "cryptokit"
   "yojson"
   "base64"
   "re"
 ]
 
-build: [
-  "dune"
-]
-
-test: [
-  "alcotest"
-]
