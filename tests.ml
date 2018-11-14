@@ -12,20 +12,18 @@ let secret =
 	"My$ecretK3y"
 
 let header_fixture (alg:Jwt.algorithm) : Jwt.header =
-	{alg = alg; typ = None}
+	Jwt.make_header
+		alg
 
 let unsigned_token_fixture (alg:Jwt.algorithm) : Jwt.unsigned_token =
-	{
-		header = header_fixture alg;
-		payload = payload_fixture;
-	}
+	Jwt.make_unsigned_token
+		(header_fixture alg)
+		payload_fixture
 
 let signed_token_fixture (alg:Jwt.algorithm) : Jwt.t =
-	{
-		header = (unsigned_token_fixture alg).header;
-		payload = (unsigned_token_fixture alg).payload;
-		signature = Jwt.sign secret (unsigned_token_fixture alg);
-	}
+	Jwt.make_signed_token
+		secret
+		(unsigned_token_fixture alg)
 
 (* Test helpes *)
 

@@ -5,6 +5,11 @@ let (>>=) result f =
 	| Error e -> Error e
 	| Ok v -> f v
 
+let map_option f option =
+	match option with
+	| None -> None
+	| Some v -> Some (f v)
+
 let flatten list =
 	List.fold_left
 		(fun acc res ->
@@ -53,6 +58,12 @@ type header =
 	} [@@deriving show, eq]
 
 
+let make_header (alg:algorithm) : header =
+	{
+		alg = alg;
+		typ = None;
+	}
+
 type payload = (string * string) list
 [@@deriving show, eq]
 
@@ -71,14 +82,12 @@ type unsigned_token =
 		payload : payload;
 	}
 
-let pp_header (header: header) : string =
-	let
-		ty =
-			match header.typ with
-			| None -> ""
-			| Some t -> t
-	in
-	algorithm_to_string header.alg ^ " " ^ ty
+
+let make_unsigned_token (header:header) (payload:payload) =
+	{
+		header = header;
+		payload = payload;
+	}
 
 
 let pp ppf (token:t) =
@@ -174,6 +183,14 @@ let sign (secret:string) (unsigned_token:unsigned_token) : string =
 		(encode_unsigned unsigned_token)
 
 
+let make_signed_token (secret:string) (unsigned_token:unsigned_token) : t =
+	{
+		header = unsigned_token.header;
+		payload = unsigned_token.payload;
+		signature = sign secret unsigned_token;
+	}
+
+
 let header_from_json json =
 	let alg =
   		Yojson.Basic.Util.member "alg" json
@@ -190,11 +207,12 @@ let decode_header =
    Yojson.Basic.from_string >> header_from_json
 
 
-let find_claim claim payload =
-	let (_, value) =
-		List.find (fun (c, _) -> ( c) = (claim)) payload
-	in
-	value
+let get_claim (claim:string) (payload:payload): string option =
+	payload
+		|> List.find_opt (fun (c,_) -> 
+			c = claim
+		)
+		|> map_option (fun (_, v) -> v)
 
 
 let claim_from_json json : ((string * string), string) result =

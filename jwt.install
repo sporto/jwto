@@ -2,3 +2,7 @@ lib: [
   "_build/install/default/lib/jwt/META" {"META"}
   "_build/install/default/lib/jwt/opam" {"opam"}
 ]
+doc: [
+  "_build/install/default/doc/jwt/LICENSE"
+  "_build/install/default/doc/jwt/README.md"
+]
