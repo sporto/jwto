@@ -14,5 +14,8 @@ depends: [
 
 build: [
   "dune"
+]
+
+test: [
   "alcotest"
 ]
