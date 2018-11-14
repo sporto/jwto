@@ -27,8 +27,7 @@ Jwt.make Jwt.HS256 "secret" payload
 ## Encode token
 
 ```ocaml
-Jwt.make Jwt.HS256 "secret" payload
-  |> Jwt.encode
+Jwt.encode Jwt.HS256 "secret" payload
 
 -->
 
