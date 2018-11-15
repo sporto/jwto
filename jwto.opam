@@ -9,7 +9,10 @@ homepage: "https://github.com/sporto/jwto"
 bug-reports: "https://github.com/sporto/jwto"
 dev-repo: "git://github.com/sporto/jwto"
 
-build: [["dune" "build" "-p" name]]
+build: [
+  ["dune" "build" "-p" name "-j" jobs]
+  ["dune" "runtest" "-p" name "-j" jobs] {with-test}
+]
 
 depends: [
   "dune" {build}
