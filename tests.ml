@@ -11,29 +11,29 @@ let payload_fixture =
 let secret =
 	"My$ecretK3y"
 
-let header_fixture (alg:Jwt.algorithm) : Jwt.header =
-	Jwt.make_header
+let header_fixture (alg:Jwto.algorithm) : Jwto.header =
+	Jwto.make_header
 		alg
 
-let unsigned_token_fixture (alg:Jwt.algorithm) : Jwt.unsigned_token =
-	Jwt.make_unsigned_token
+let unsigned_token_fixture (alg:Jwto.algorithm) : Jwto.unsigned_token =
+	Jwto.make_unsigned_token
 		(header_fixture alg)
 		payload_fixture
 
-let signed_token_fixture (alg:Jwt.algorithm) : Jwt.t =
-	Jwt.make_signed_token
+let signed_token_fixture (alg:Jwto.algorithm) : Jwto.t =
+	Jwto.make_signed_token
 		secret
 		(unsigned_token_fixture alg)
 
 (* Test helpes *)
 
 let alg_to_str =
-	Jwt.algorithm_to_string
+	Jwto.algorithm_to_string
 
 let compareT =
 	Alcotest.testable
-		Jwt.pp
-		Jwt.eq
+		Jwto.pp
+		Jwto.eq
 
 let resultT =
 	Alcotest.result
@@ -43,18 +43,18 @@ let resultT =
 (* Test data *)
 
 type data = {
-	alg: Jwt.algorithm;
+	alg: Jwto.algorithm;
 	token: string;
 }
 
 let data =
 	[
 		{
-			alg = Jwt.HS256;
+			alg = Jwto.HS256;
 			token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoic29tZUB1c2VyLnRsZCJ9.kWOVtIOpWcG7JnyJG0qOkTDbOy636XrrQhMm_8JrRQ8";
 		};
 		{
-			alg = Jwt.HS512;
+			alg = Jwto.HS512;
 			token = "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoic29tZUB1c2VyLnRsZCJ9.8zNtCBTJIZTHpZ-BkhR-6sZY1K85Nm5YCKqV3AxRdsBJDt_RR-REH2db4T3Y0uQwNknhrCnZGvhNHrvhDwV1kA";
 		};
 	]
@@ -65,7 +65,7 @@ let encode_header () =
 	Alcotest.(check string)
 		"It encodes"
 		header_json
-		(Jwt.header_to_string (header_fixture Jwt.HS256))
+		(Jwto.header_to_string (header_fixture Jwto.HS256))
 
 
 let header_to_string = [
@@ -76,14 +76,14 @@ let empty_payload () =
 	Alcotest.(check string)
 		"empty" 
 		"{}"
-		(Jwt.payload_to_string [])
+		(Jwto.payload_to_string [])
 
 
 let with_payload () =
 	Alcotest.(check string)
 		"with payload" 
 		"{\"hello\":\"word\"}"
-		(Jwt.payload_to_string [( "hello", "word" )])
+		(Jwto.payload_to_string [( "hello", "word" )])
 
 let payload_to_string = [
 	"Empty payload", `Quick, empty_payload;
@@ -94,7 +94,7 @@ let encode_test (data:data) () =
 	Alcotest.(check string)
 		"encodes"
 		data.token
-		(Jwt.encode
+		(Jwto.encode
 			data.alg
 			secret 
 			payload_fixture
@@ -114,13 +114,13 @@ let decode_test (data:data) () =
 	Alcotest.(check resultT)
 		"decodes"
 		(Ok (signed_token_fixture data.alg))
-		(Jwt.decode data.token)
+		(Jwto.decode data.token)
 
 let decode_fail_test () =
 	Alcotest.(check resultT)
 		"it fails to decode"
 		(Error "Bad token")
-		(Jwt.decode "Monkey")
+		(Jwto.decode "Monkey")
 
 let decode =
 	data
@@ -139,13 +139,13 @@ let is_valid_true (data:data) () =
 	Alcotest.(check bool)
 		"true"
 		true
-		(Jwt.is_valid secret (signed_token_fixture data.alg))
+		(Jwto.is_valid secret (signed_token_fixture data.alg))
 
 let is_valid_false (data:data) () =
 	Alcotest.(check bool)
 		"false"
 		false
-		(Jwt.is_valid "xyz" (signed_token_fixture data.alg))
+		(Jwto.is_valid "xyz" (signed_token_fixture data.alg))
 
 let is_valid = 
 	data
@@ -164,13 +164,13 @@ let decode_and_verify_ok (data:data) () =
 	Alcotest.(check resultT)
 		"decodes"
 		(Ok (signed_token_fixture data.alg))
-		(Jwt.decode_and_verify secret data.token)
+		(Jwto.decode_and_verify secret data.token)
 
 let decode_and_verify_err (data:data) () =
 	Alcotest.(check resultT)
 		"decodes"
 		(Error "Invalid token")
-		(Jwt.decode_and_verify "xyz" data.token)
+		(Jwto.decode_and_verify "xyz" data.token)
 
 let decode_and_verify = 
 	data

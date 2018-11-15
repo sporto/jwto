@@ -1,17 +1,20 @@
 opam-version: "2.0"
-name: "JWT"
+name: "JWTo"
 synopsis: "JWT encoding, decoding and verification"
 version: "0.1.0"
 maintainer: "Sebastian Porto <s@porto5.com>"
 license: "MIT"
 homepage: "https://github.com/sporto/ocaml-jwt"
+bug-reports: "https://github.com/sporto/ocaml-jwt"
+dev-repo: "https://github.com/sporto/ocaml-jwt"
 
 depends: [
   "dune" {build}
-  "alcotest" {with-test}
+  "alcotest" {test}
   "cryptokit"
   "yojson"
   "base64"
   "re"
+  "ppx_deriving"
 ]
 
