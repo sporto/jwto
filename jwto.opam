@@ -2,6 +2,7 @@ opam-version: "2.0"
 name: "JWTo"
 synopsis: "JWT encoding, decoding and verification"
 version: "0.1.0"
+authors: "Sebastian Porto"
 maintainer: "Sebastian Porto <s@porto5.com>"
 license: "MIT"
 homepage: "https://github.com/sporto/jwto"
@@ -12,7 +13,7 @@ build: [["dune" "build" "-p" name]]
 
 depends: [
   "dune" {build}
-  "alcotest" {test}
+  "alcotest" {with-test}
   "cryptokit"
   "yojson"
   "base64"
