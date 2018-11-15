@@ -8,6 +8,8 @@ homepage: "https://github.com/sporto/jwto"
 bug-reports: "https://github.com/sporto/jwto"
 dev-repo: "git://github.com/sporto/jwto"
 
+build: [["dune" "build" "-p" name]]
+
 depends: [
   "dune" {build}
   "alcotest" {test}
