@@ -1,5 +1,5 @@
 (tests
 	(names tests) 
 	(preprocess (pps ppx_deriving.std))
-	(libraries base64 cryptokit re.str yojson alcotest)
+	(libraries ppx_deriving.std base64 cryptokit re.str yojson alcotest)
 	)

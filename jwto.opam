@@ -24,3 +24,5 @@ depends: [
   "ppx_deriving"
 ]
 
+available: [ ocaml-version >= "4.05" ]
+
