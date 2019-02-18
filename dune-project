@@ -1,2 +1,3 @@
-(lang dune 1.3)
-(name jwt)
+(lang dune 1.7)
+(using fmt 1.1)
+(name jwto)

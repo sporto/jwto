@@ -1,11 +1,11 @@
-type algorithm =
-	| HS256
-	| HS512
-	| Unknown
+type algorithm = HS256 | HS512 | Unknown
 
 type t
+
 type header
+
 type payload = (string * string) list
+
 type unsigned_token
 
 (* Encode, decode, verify *)

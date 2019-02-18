@@ -1,8 +1,0 @@
-lib: [
-  "_build/install/default/lib/jwto/META" {"META"}
-  "_build/install/default/lib/jwto/opam" {"opam"}
-]
-doc: [
-  "_build/install/default/doc/jwto/LICENSE"
-  "_build/install/default/doc/jwto/README.md"
-]

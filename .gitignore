@@ -1,2 +1,7 @@
 _build
 .merlin
+*.install
+*.docdir
+*.native
+*.byte
+
