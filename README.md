@@ -11,10 +11,10 @@ let payload =
     ("age", "17");
   ]
 
-Jwt.make Jwt.HS256 "secret" payload
+Jwto.make Jwto.HS256 "secret" payload
 ```
 
-`Jwt.make` returns a signed token (type Jwt.t):
+`Jwto.make` returns a signed token (type Jwto.t):
 
 ```ocaml
 {
@@ -27,7 +27,7 @@ Jwt.make Jwt.HS256 "secret" payload
 ## Encode token
 
 ```ocaml
-Jwt.encode Jwt.HS256 "secret" payload
+Jwto.encode Jwto.HS256 "secret" payload
 
 -->
 
@@ -39,7 +39,7 @@ Jwt.encode Jwt.HS256 "secret" payload
 Just decode the token, doesn't verify.
 
 ```ocaml
-Jwt.decode "eyJhbGciOiJIUzI1NiJ9...."
+Jwto.decode "eyJhbGciOiJIUzI1NiJ9...."
 
 -->
 
@@ -51,7 +51,7 @@ Ok { header = ...; payload = [...]; signature = ... }
 Verify and decode. If the verification fails you will get an `Error`.
 
 ```ocaml
-Jwt.decode_and_verify "secret" "eyJhbGciOiJIUzI1NiJ9...."
+Jwto.decode_and_verify "secret" "eyJhbGciOiJIUzI1NiJ9...."
 
 -->
 
@@ -61,7 +61,7 @@ Ok { header = ...; payload = [...]; signature = ... }
 ## Verify only
 
 ```ocaml
-Jwt.is_valid "secet" "eyJhbGciOiJIUzI1NiJ9...."
+Jwto.is_valid "secet" "eyJhbGciOiJIUzI1NiJ9...."
 
 -->
 
