@@ -1,5 +1,12 @@
 (* Fixtures *)
 
+exception Fail of string
+
+let ok_or_fail result =
+  match result with
+  | Ok v -> v
+  | Error e -> raise (Fail e)
+
 let header_json =
   "{\"alg\":\"HS256\"}"
 
@@ -21,9 +28,14 @@ let unsigned_token_fixture (alg:Jwto.algorithm) : Jwto.unsigned_token =
     payload_fixture
 
 let signed_token_fixture (alg:Jwto.algorithm) : Jwto.t =
-  Jwto.make_signed_token
-    secret
-    (unsigned_token_fixture alg)
+  let result =
+    Jwto.make_signed_token
+      secret
+      (unsigned_token_fixture alg)
+  in
+  match result with
+  | Ok signed_token -> signed_token
+  | Error e -> raise (Fail e)
 
 (* Test helpes *)
 
@@ -90,6 +102,7 @@ let payload_to_string = [
   "With payload", `Quick, with_payload;
 ]
 
+
 let encode_test (data:data) () =
   Alcotest.(check string)
     "encodes"
@@ -98,6 +111,7 @@ let encode_test (data:data) () =
       data.alg
       secret 
       payload_fixture
+      |> ok_or_fail
     )
 
 let encode =
