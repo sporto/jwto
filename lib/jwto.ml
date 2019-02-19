@@ -223,25 +223,28 @@ let encode (alg : algorithm) (secret : string) (payload : payload) : (string, st
 
 let decodeParts (header_encoded : string) (payload_encoded : string)
     (signature_encoded : string) =
-  match b64_url_decode payload_encoded with
-  | Error e -> Error e
-  | Ok payload_string ->
-    let payload_result =
-        decode_payload payload_string
-    in
-    let header_result =
-      header_encoded
-        |> b64_url_decode
-        |> map_result decode_header
-    in
-    let signature_result =
-      b64_url_decode signature_encoded
-    in
-    match (header_result, payload_result, signature_result) with
-    | (Ok header, Ok payload, Ok signature) ->
-        Ok {header; payload; signature}
-    | _ ->
-        Error "Unable to decode parts"
+  let payload_result =
+    payload_encoded
+      |> b64_url_decode
+      >>= decode_payload
+  in
+  let header_result =
+    header_encoded
+      |> b64_url_decode
+      |> map_result decode_header
+  in
+  let signature_result =
+    b64_url_decode signature_encoded
+  in
+  match (header_result, payload_result, signature_result) with
+  | (Ok header, Ok payload, Ok signature) ->
+      Ok {header; payload; signature}
+  | (Error err, _, _) ->
+    Error ("header : " ^ err)
+  | (_, Error err, _) ->
+    Error ("payload : " ^ err)
+  | (_, _, Error err) ->
+    Error ("signature : " ^ err)
 
 let decode (token : string) : (t, string) result =
   try
@@ -250,7 +253,10 @@ let decode (token : string) : (t, string) result =
     in
     match token_splitted with
     | [header_encoded; payload_encoded; signature_encoded] ->
-        decodeParts header_encoded payload_encoded signature_encoded
+        decodeParts
+          header_encoded
+          payload_encoded
+          signature_encoded
     | _ -> Error "Bad token"
   with _ ->
     Error "Bad token"
