@@ -1,6 +1,9 @@
 let ( >> ) f g x = g (f x)
 
-let ( >>= ) result f = match result with Error e -> Error e | Ok v -> f v
+let ( >>= ) result f =
+  match result with
+    | Error e -> Error e
+    | Ok v -> f v
 
 let map_result f result =
   match result with
@@ -53,7 +56,10 @@ type header =
   } [@@deriving show, eq]
 
 let make_header (alg : algorithm) : header =
-  {alg; typ= None}
+  {
+    alg; 
+    typ = None;
+  }
 
 type payload = (string * string) list [@@deriving show, eq]
 
@@ -73,13 +79,17 @@ type unsigned_token =
 let make_unsigned_token (header : header) (payload : payload) =
   {header; payload}
 
-let pp ppf (token : t) = Fmt.pf ppf "%S" (show token)
+let pp ppf (token : t) =
+  Fmt.pf ppf "%S" (show token)
 
-let eq (a : t) (b : t) : bool = equal a b
+let eq (a : t) (b : t) : bool =
+  equal a b
 
-let algorithm_from_header h = h.alg
+let algorithm_from_header h =
+  h.alg
 
-let typ_from_header h = h.typ
+let typ_from_header h =
+  h.typ
 
 let header_to_json (header : header) =
   let alg =
@@ -150,25 +160,24 @@ let sign (secret : string) (unsigned_token : unsigned_token) : (string, string) 
   let algo_fn =
     fn_for_algorithm unsigned_token.header.alg 
   in
-  match encode_unsigned unsigned_token with
-  | Ok encoded_token ->
-    Ok (
+  encode_unsigned unsigned_token
+    |> map_result (fun encoded_token ->
+      (
         Cryptokit.hash_string
           (algo_fn secret)
           encoded_token
       )
-  | Error _ ->
-    Error "Unable to sign token"
+    ) 
 
 let make_signed_token (secret : string) (unsigned_token : unsigned_token) : (t, string) result =
-  match sign secret unsigned_token with
-  | Ok signature ->
-    Ok {
+  sign secret unsigned_token
+    |> map_result (fun signature ->
+      {
         header = unsigned_token.header;
         payload = unsigned_token.payload;
         signature;
       }
-  | Error e -> Error e
+    )
 
 let header_from_json json =
   let alg =
@@ -179,7 +188,10 @@ let header_from_json json =
     Yojson.Basic.Util.member "typ" json
       |> Yojson.Basic.Util.to_string_option
   in
-  {alg= algorithm_from_string alg; typ}
+  {
+    alg = algorithm_from_string alg;
+    typ;
+  }
 
 let decode_header =
   Yojson.Basic.from_string >> header_from_json
@@ -201,7 +213,8 @@ let payload_from_json json : (payload, string) result =
     |> List.map claim_from_json
     |> flatten
 
-let decode_payload = Yojson.Basic.from_string >> payload_from_json
+let decode_payload =
+  Yojson.Basic.from_string >> payload_from_json
 
 let encode (alg : algorithm) (secret : string) (payload : payload) : (string, string) result =
   let header =
@@ -210,16 +223,20 @@ let encode (alg : algorithm) (secret : string) (payload : payload) : (string, st
   let unsigned_token =
     {header; payload}
   in
-  match sign secret unsigned_token with
-  | Error e -> Error e
-  | Ok signature ->
-    match encode_unsigned unsigned_token with
+  let signature_result =
+    sign secret unsigned_token
+  in
+  let unsigned_token_string_result =
+    encode_unsigned unsigned_token
+  in
+  match (signature_result, unsigned_token_string_result) with
+  | (Error e, _) -> Error e
+  | (_, Error e) -> Error e
+  | (Ok signature, Ok unsigned_token_string) ->
+    match b64_url_encode signature with
     | Error e -> Error e
-    | Ok unsigned_token_string ->
-      match b64_url_encode signature with
-      | Error e -> Error e
-      | Ok b64_signature ->
-        Ok (unsigned_token_string ^ "." ^ b64_signature)
+    | Ok b64_signature ->
+      Ok (unsigned_token_string ^ "." ^ b64_signature)
 
 let decode_parts (header_encoded : string) (payload_encoded : string)
     (signature_encoded : string) =
