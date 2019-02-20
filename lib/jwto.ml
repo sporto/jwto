@@ -117,7 +117,7 @@ let b64_url_encode (str : string) : (string, string) result =
 
 let b64_url_decode (str : string) : (string, string) result =
   let result =
-    Base64.decode ~alphabet:Base64.uri_safe_alphabet str
+    Base64.decode ~pad:false ~alphabet:Base64.uri_safe_alphabet str
   in
   match result with
   | Error (`Msg err) -> Error err
@@ -221,7 +221,7 @@ let encode (alg : algorithm) (secret : string) (payload : payload) : (string, st
       | Ok b64_signature ->
         Ok (unsigned_token_string ^ "." ^ b64_signature)
 
-let decodeParts (header_encoded : string) (payload_encoded : string)
+let decode_parts (header_encoded : string) (payload_encoded : string)
     (signature_encoded : string) =
   let payload_result =
     payload_encoded
@@ -253,7 +253,7 @@ let decode (token : string) : (t, string) result =
     in
     match token_splitted with
     | [header_encoded; payload_encoded; signature_encoded] ->
-        decodeParts
+        decode_parts
           header_encoded
           payload_encoded
           signature_encoded
