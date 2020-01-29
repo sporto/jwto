@@ -15,17 +15,17 @@ let map_option f option =
   | None -> None 
   | Some v -> Some (f v)
 
-let flatten list =
-  List.fold_left
-    (fun acc res ->
-      match acc with
-      | Error e -> Error e
-      | Ok values -> (
-        match res with 
-          | Error e -> Error e 
-          | Ok v -> Ok (v :: values) ) 
+let flatten (list: ('a, 'b) result list) =
+  List.fold_right
+    (fun item acm ->
+     match acm with
+     | Error e -> Error e
+     | Ok v1 ->
+       match item with
+       | Error e -> Error e
+       | Ok v2 -> Ok (v2 :: v1)
     )
-    (Ok []) list
+    list (Ok [])
 
 type algorithm =
   | HS256 

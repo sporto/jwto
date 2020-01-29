@@ -13,6 +13,7 @@ let header_json =
 let payload_fixture =
   [
     ("user_id", "some@user.tld");
+    ("user_name", "user");
   ]
 
 let secret =
@@ -63,11 +64,11 @@ let data =
   [
     {
       alg = Jwto.HS256;
-      token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoic29tZUB1c2VyLnRsZCJ9.kWOVtIOpWcG7JnyJG0qOkTDbOy636XrrQhMm_8JrRQ8";
+      token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoic29tZUB1c2VyLnRsZCIsInVzZXJfbmFtZSI6InVzZXIifQ.oWQQcNC80L91BVqJya8mSEKwB2-axLjDClVI1lOA85o";
     };
     {
       alg = Jwto.HS512;
-      token = "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoic29tZUB1c2VyLnRsZCJ9.8zNtCBTJIZTHpZ-BkhR-6sZY1K85Nm5YCKqV3AxRdsBJDt_RR-REH2db4T3Y0uQwNknhrCnZGvhNHrvhDwV1kA";
+      token = "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoic29tZUB1c2VyLnRsZCIsInVzZXJfbmFtZSI6InVzZXIifQ.VzxiGtU2kDmUAl7P3TcK3GTOdmhrIlhkWTfv09j0qou5Z8LQ29QeqaF-XB4D1LYa0JCXSXlhSEeamFyEEcaNDA";
     };
   ]
 
