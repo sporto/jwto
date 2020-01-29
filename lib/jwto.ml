@@ -20,10 +20,10 @@ let flatten (list: ('a, 'b) result list) =
     (fun item acm ->
      match acm with
      | Error e -> Error e
-     | Ok v1 ->
+     | Ok values ->
        match item with
        | Error e -> Error e
-       | Ok v2 -> Ok (v2 :: v1)
+       | Ok v -> Ok (v :: values)
     )
     list (Ok [])
 
