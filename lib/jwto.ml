@@ -278,6 +278,12 @@ let decode (token : string) : (t, string) result =
   with _ ->
     Error "Bad token"
 
+let get_header ({header; _} : t) = header
+
+let get_payload ({payload; _} : t) = payload
+
+let get_signature ({signature; _} : t) = signature
+
 let is_valid (secret : string) (jwt : t) : bool =
   let unsigned =
     {header = jwt.header; payload = jwt.payload}

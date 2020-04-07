@@ -27,6 +27,12 @@ Decode a token, this doesn't verify
 *)
 val decode : string -> (t, string) result
 
+(* Getters *)
+
+val get_header: t -> header
+val get_payload: t -> payload
+val get_signature: t -> string
+
 (*
 Decode and verify
 
