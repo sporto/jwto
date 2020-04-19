@@ -205,6 +205,7 @@ let claim_from_json json : (string * string, string) result =
   match json with
   | claim, `String value -> Ok (claim, value)
   | claim, `Int value -> Ok (claim, string_of_int value)
+  | claim, `Bool value -> Ok (claim, string_of_bool value)
   | _ -> Error "Bad payload"
 
 let payload_from_json json : (payload, string) result =
