@@ -1,69 +1,65 @@
 # Ocaml JWT
 
-## Create a token
+## Create and encode a signed token
 
 A payload is a list of tuples `(string, string)`:
 
 ```ocaml
 let payload =
   [
-    ("user", "sam);
+    ("user", "sam");
     ("age", "17");
   ]
-
-Jwto.make Jwto.HS256 "secret" payload
 ```
 
-`Jwto.make` returns a signed token (type Jwto.t):
+For the signature algorithm, `Jwto` supports HMAC applied to SHA-256
+or SHA-512. As per the [cryptokit documentation](https://github.com/xavierleroy/cryptokit/blob/master/src/cryptokit.mli), the secret key can have any length, but a minimal length of 64 bytes is recommended for SHA-512 (or at least 32 bytes for SHA-256).
 
-```ocaml
-{
-  header = ...;
-  payload = [...]; 
-  signature = ...;
-}
-```
-
-## Encode token
+We can sign and encode the payload in one go by doing:
 
 ```ocaml
 Jwto.encode Jwto.HS256 "secret" payload
 
 -->
 
-"eyJhbGciOiJIUzI1NiJ9...."
+"eyJhbGciOiJIUzI1NiJ9..."
 ```
 
 ## Decode token
 
-Just decode the token, doesn't verify.
+To decode the token without verifying it, and get a `Jwto.t`:
 
 ```ocaml
-Jwto.decode "eyJhbGciOiJIUzI1NiJ9...."
+let signed_token =
+  match Jwto.decode "eyJhbGciOiJIUzI1NiJ9..." with
+  | Ok t -> t
+  | Error err -> failwith err
 
 -->
 
-Ok { header = ...; payload = [...]; signature = ... }	
+{ header = ...; payload = [...]; signature = ... }	
+```
+
+## Verify token
+
+```ocaml
+Jwto.is_valid "secret" signed_token
+
+-->
+
+true
 ```
 
 ## Decode and verify
 
-Verify and decode. If the verification fails you will get an `Error`.
+To decode and verify the token in one go:
 
 ```ocaml
-Jwto.decode_and_verify "secret" "eyJhbGciOiJIUzI1NiJ9...."
+Jwto.decode_and_verify "secret" "eyJhbGciOiJIUzI1NiJ9..."
 
 -->
 
 Ok { header = ...; payload = [...]; signature = ... }
 ```
 
-## Verify only
-
-```ocaml
-Jwto.is_valid "secet" "eyJhbGciOiJIUzI1NiJ9...."
-
--->
-
-true
-```
+If the verification fails, you will get an `Error`.
