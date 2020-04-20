@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.0
+
+- Added support for `Bool` in claim type
+
 ## 0.2.2
 
 - Expose getters `get_header`, `get_payload` and `get_signature`
