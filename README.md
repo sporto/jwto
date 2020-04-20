@@ -13,8 +13,7 @@ let payload =
 ```
 
 For the signature algorithm, `Jwto` supports HMAC applied to SHA-256
-or SHA-512. As per the [cryptokit documentation](https://github.com/xavierleroy/cryptokit/blob/master/src/cryptokit.mli), the secret key can have any length, but a minimal length of 64 bytes is
-recommended for SHA-512 (or at least 32 bytes for SHA-256).
+or SHA-512. As per the [cryptokit documentation](https://github.com/xavierleroy/cryptokit/blob/master/src/cryptokit.mli), the secret key can have any length, but a minimal length of 64 bytes is recommended for SHA-512 (or at least 32 bytes for SHA-256).
 
 We can sign and encode the payload in one go by doing:
 
