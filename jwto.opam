@@ -7,7 +7,7 @@ license: "MIT"
 homepage: "https://github.com/sporto/jwto"
 bug-reports: "https://github.com/sporto/jwto"
 doc: "https://sporto.github.io/jwto/"
-dev-repo: "git://github.com/sporto/jwto"
+dev-repo: "git+https://github.com/sporto/jwto.git"
 
 build: [
   ["dune" "subst"] {pinned}
