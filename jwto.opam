@@ -1,6 +1,5 @@
 opam-version: "2.0"
 name: "JWTo"
-synopsis: "JWT encoding, decoding and verification"
 version: "0.3.0"
 authors: "Sebastian Porto"
 maintainer: "Sebastian Porto <s@porto5.com>"
@@ -27,3 +26,5 @@ depends: [
   "ppx_deriving" {>= "4.2"}
 ]
 
+synopsis: "JWT encoding, decoding and verification"
+description: "JWT encoding, decoding and verification"
