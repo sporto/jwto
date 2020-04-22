@@ -6,7 +6,7 @@ maintainer: "Sebastian Porto <s@porto5.com>"
 license: "MIT"
 homepage: "https://github.com/sporto/jwto"
 bug-reports: "https://github.com/sporto/jwto"
-doc: "https://github.com/sporto/jwto"
+doc: "https://sporto.github.io/jwto/"
 dev-repo: "git://github.com/sporto/jwto"
 
 build: [
