@@ -33,10 +33,10 @@ type algorithm =
   | Unknown
   [@@deriving show, eq]
 
-let fn_for_algorithm = function
-  | HS256 -> Cryptokit.MAC.hmac_sha256
-  | HS512 -> Cryptokit.MAC.hmac_sha512
-  | Unknown -> Cryptokit.MAC.hmac_sha256
+let fn_for_algorithm alg ~secret str = match alg with
+  | HS256 -> Digestif.SHA256.hmac_string ~key:secret str |> Digestif.SHA256.to_raw_string
+  | HS512 -> Digestif.SHA512.hmac_string ~key:secret str |> Digestif.SHA512.to_raw_string
+  | Unknown -> Digestif.SHA256.hmac_string ~key:secret str |> Digestif.SHA256.to_raw_string
 
 let algorithm_to_string (alg : algorithm) : string =
   match alg with 
@@ -161,13 +161,7 @@ let sign (secret : string) (unsigned_token : unsigned_token) : (string, string) 
     fn_for_algorithm unsigned_token.header.alg 
   in
   encode_unsigned unsigned_token
-    |> map_result (fun encoded_token ->
-      (
-        Cryptokit.hash_string
-          (algo_fn secret)
-          encoded_token
-      )
-    ) 
+    |> map_result (fun encoded_token -> algo_fn ~secret encoded_token)
 
 let make_signed_token (secret : string) (unsigned_token : unsigned_token) : (t, string) result =
   sign secret unsigned_token
