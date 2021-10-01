@@ -1,0 +1,7 @@
+profile=sparse
+dock-collection-brackets=true
+break-separators=after
+function-indent=4
+if-then-else=k-r
+let-binding-indent=4
+margin=64

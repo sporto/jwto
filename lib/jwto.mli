@@ -1,4 +1,7 @@
-type algorithm = HS256 | HS512 | Unknown
+type algorithm =
+  | HS256
+  | HS512
+  | Unknown
 
 type t
 
@@ -10,28 +13,31 @@ type unsigned_token
 
 (* Encode, decode, verify *)
 
-(* 
-Encode a token
+(*
+   Encode a token
 
-	Jwt.encode
-		Jwt.HS256
-		"secret" 
-		payload
+   	Jwt.encode
+   		Jwt.HS256
+   		"secret"
+   		payload
 *)
-val encode : algorithm -> string -> payload -> (string, string) result
+val encode :
+  algorithm -> string -> payload -> (string, string) result
 
-(* 
-Decode a token, this doesn't verify
+(*
+   Decode a token, this doesn't verify
 
-	Jwt.decode "eyJhbGciOiJIUzI1NiJ9...."
+   	Jwt.decode "eyJhbGciOiJIUzI1NiJ9...."
 *)
 val decode : string -> (t, string) result
 
 (* Getters *)
 
-val get_header: t -> header
-val get_payload: t -> payload
-val get_signature: t -> string
+val get_header : t -> header
+
+val get_payload : t -> payload
+
+val get_signature : t -> string
 
 (*
 Decode and verify
@@ -49,7 +55,8 @@ val make_header : algorithm -> header
 
 val make_unsigned_token : header -> payload -> unsigned_token
 
-val make_signed_token : string -> unsigned_token -> (t, string) result
+val make_signed_token :
+  string -> unsigned_token -> (t, string) result
 
 (* Utility functions *)
 
