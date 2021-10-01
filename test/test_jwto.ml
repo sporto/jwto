@@ -38,7 +38,7 @@ let signed_token_fixture (alg : Jwto.algorithm) : Jwto.t =
         raise (Fail e)
 
 
-(* Test helpes *)
+(* Test helpers *)
 
 let alg_to_str = Jwto.algorithm_to_string
 
@@ -46,7 +46,7 @@ let compareT = Alcotest.testable Jwto.pp Jwto.eq
 
 let resultT = Alcotest.result compareT Alcotest.string
 
-(* Test data *)
+(* Fixtures *)
 
 type data = {
   alg : Jwto.algorithm;
@@ -195,10 +195,12 @@ let decode_and_verify =
     data
     |> List.map (fun d ->
            [
-             ( alg_to_str d.alg ^ " decode when valid",
+             ( Jwto.algorithm_to_string d.alg
+               ^ " decode when valid",
                `Quick,
                decode_and_verify_ok d );
-             ( alg_to_str d.alg ^ " fails when invalid",
+             ( Jwto.algorithm_to_string d.alg
+               ^ " fails when invalid",
                `Quick,
                decode_and_verify_err d );
            ] )
@@ -207,7 +209,7 @@ let decode_and_verify =
 
 let () =
     Alcotest.run
-      "JWT"
+      "JWTo"
       [
         ("Encode header", header_to_string);
         ("Encode payload", payload_to_string);

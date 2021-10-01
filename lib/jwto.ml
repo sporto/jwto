@@ -338,5 +338,3 @@ let verify secret jwt =
 let decode_and_verify (secret : string) (token : string) :
     (t, string) result =
     token |> decode >>= verify secret
-
-(* Printf.printf "%S \n" (make_signature secret unsigned); *)
