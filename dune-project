@@ -4,8 +4,6 @@
 
 (license MIT)
 
-(using fmt 1.1)
-
 (authors "Sebastian Porto")
 
 (maintainers "Sebastian Porto")
