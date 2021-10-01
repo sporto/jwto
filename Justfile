@@ -1,10 +1,10 @@
-install:
-	dune external-lib-deps --missing @runtest
+all:
+	opam exec -- dune build --root . @install
 
 test:
-	dune runtest
+	opam exec -- dune runtest --root .
 
-publish:
+release: all
 	opam exec -- dune-release tag
 	opam exec -- dune-release distrib
 	opam exec -- dune-release publish distrib -y
