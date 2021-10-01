@@ -1,3 +1,0 @@
-- name: test
-  service: testing_image
-  command: dune runtest

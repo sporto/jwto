@@ -7,5 +7,5 @@
  (name runtest)
  (package jwto)
  (deps test_jwto.exe)
- (action (run %{deps})))
-  
+ (action
+  (run %{deps})))

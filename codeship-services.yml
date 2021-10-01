@@ -1,4 +1,0 @@
-testing_image:
-  build:
-    image: testing_image
-    dockerfile: Dockerfile
