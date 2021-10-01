@@ -1,5 +1,3 @@
-# CHANGELOG
-
 ## 0.4.0
 
 - Use `digestif` instead of `cryptokit`
