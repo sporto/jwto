@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.4.0
+
+- Use `digestif` instead of `cryptokit`
+
 ## 0.3.0
 
 - Added support for `Bool` in claim type
