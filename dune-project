@@ -10,6 +10,9 @@
 
 (homepage "https://github.com/sporto/jwto")
 
+(source
+ (github "sporto/jwto"))
+
 (bug_reports "https://github.com/sporto/jwto")
 
 (generate_opam_files true)
